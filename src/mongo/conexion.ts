@@ -14,7 +14,7 @@ export const connectmongodb = async (): Promise<void> =>{
     try{
         client = new MongoClient(MONGO)
         await client.connect()
-        db = client.db("BackCuatro")
+        db = client.db("Game")
         console.log("Connected to db")
 
     }catch (error){

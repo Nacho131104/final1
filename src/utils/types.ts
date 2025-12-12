@@ -3,19 +3,18 @@ import { ObjectId } from "mongodb";
 
 
 
-export type VideoJuego = {
-    _id: ObjectId,
+export type VideoGame = {
+    _id?: string,
     title: string,
     price: number,
-    year: number
+    year: string
 }
 
 
 export type User={
     _id:ObjectId,
     email:string,
-    password:string,
-    videogames: ObjectId[]
+    videogames: string[]
 }
 
 
