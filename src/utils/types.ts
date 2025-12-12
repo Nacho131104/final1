@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 
 
 export type VideoGame = {
-    _id?: string,
+    _id?: ObjectId,
     title: string,
     price: number,
     year: string

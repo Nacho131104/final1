@@ -28,16 +28,17 @@ export const resolvers: IResolvers = {
       const result = getDb().collection(colleccionVideojuegos).findOne({_id: new ObjectId(id)})
       if (!result) return null
       return result
+    },
+    videoGames: async () =>{
+      const db = getDb()
+      return await db.collection(colleccionVideojuegos).find().toArray()
     }
   },
 
   Mutation: {
     register: async (_, { name, email, password }) => {
       const userId = await insertarUsuario(name, email, password);
-      return {
-        token: signToken(userId),
-        user: { _id: userId, name, email },
-      };
+      return signToken(userId)
     },
 
     login: async (_, { email, password }) => {
@@ -45,10 +46,7 @@ export const resolvers: IResolvers = {
       if (!user) {
         throw new Error("Credenciales incorrectas");
       }
-      return {
-        token: signToken(user._id.toString()),
-        user,
-      };
+      return signToken(user._id.toString())
     },
     addVideogame: async(_,{title, price, year}) =>{
       const db = getDb()
@@ -64,6 +62,25 @@ export const resolvers: IResolvers = {
         price,
         year
       }
+    },
+    addVideoGametoUser: async(_, { id }: { id: string }, { user }) => {
+      if (!user) throw new Error("No puedes añadir videojuegos");
+      const db = getDb();
+
+      const videogame = await db.collection(colleccionVideojuegos).findOne({ _id: new ObjectId(id) });
+      if (!videogame) throw new Error("No existe este videojuego");
+
+      await db.collection(colleccionUsuarios).updateOne(
+        { _id: user.userId },
+        { $addToSet: { videogames: new ObjectId(id) } } // 👈 aquí el cambio
+      );
+
+      const updateUser = await db.collection(colleccionUsuarios).findOne({ _id: user.userId });
+      if (!updateUser) {
+        throw new Error("Usuario no encontrado después de actualizar");
+      }
+      return updateUser;
     }
+
   },
 };

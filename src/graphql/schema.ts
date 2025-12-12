@@ -33,7 +33,7 @@ export const typeDefs = gql`
 
         addVideogame(title: String!, price: Int!, year: String!): VideoGame!
 
-        addVideoGametoUser(videoID: String!): User!
+        addVideoGametoUser(id: String!): User!
     }
 
 `;
