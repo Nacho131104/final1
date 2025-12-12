@@ -36,8 +36,8 @@ export const resolvers: IResolvers = {
   },
 
   Mutation: {
-    register: async (_, { name, email, password }) => {
-      const userId = await insertarUsuario(name, email, password);
+    register: async (_, {  email, password }) => {
+      const userId = await insertarUsuario(email, password);
       return signToken(userId)
     },
 
@@ -67,15 +67,17 @@ export const resolvers: IResolvers = {
       if (!user) throw new Error("No puedes añadir videojuegos");
       const db = getDb();
 
+      console.log(user)
       const videogame = await db.collection(colleccionVideojuegos).findOne({ _id: new ObjectId(id) });
       if (!videogame) throw new Error("No existe este videojuego");
+      console.log(videogame)
 
       await db.collection(colleccionUsuarios).updateOne(
-        { _id: user.userId },
+        { _id: user._id },
         { $addToSet: { videogames: new ObjectId(id) } } // 👈 aquí el cambio
       );
 
-      const updateUser = await db.collection(colleccionUsuarios).findOne({ _id: user.userId });
+      const updateUser = await db.collection(colleccionUsuarios).findOne({ _id: user._id });
       if (!updateUser) {
         throw new Error("Usuario no encontrado después de actualizar");
       }

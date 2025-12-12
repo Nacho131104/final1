@@ -17,7 +17,6 @@ export type User={
     videogames: string[]
 }
 
-
 export type TokenPayload = {
     userId: string;
 }

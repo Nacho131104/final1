@@ -3,14 +3,14 @@ import { getDb } from "../mongo/conexion";
 import { ObjectId } from "mongodb";
 
 
-export const insertarUsuario =async(name:string,email:string,password:string)=>{
+export const insertarUsuario =async(email:string,password:string)=>{
     const db=getDb()
     const encriptada = await bcrypt.hash(password,10)
 
-    const result= await db.collection("Usuarios").insertOne({
-        name,
+    const result = await db.collection("Usuarios").insertOne({
         email,
-        password:encriptada
+        password:encriptada,
+        videogames: []
     })
 
     return result.insertedId.toString()
