@@ -5,6 +5,9 @@ import { insertarUsuario, comprobarContraseña } from "../utils/users";
 import { signToken } from "../utils/auth";
 import { VideoGame, User } from "../utils/types";
 
+const colleccionVideojuegos = "VideoJuegos"
+const colleccionUsuarios = "Usuarios"
+
 export const resolvers: IResolvers = {
   User: {
     videogames: async (parent: User) => {
@@ -12,19 +15,20 @@ export const resolvers: IResolvers = {
       const videoGamesIDs = (parent.videogames || []).map((vd) =>
         typeof vd === "string" ? new ObjectId(vd) : vd
       );
-      return db.collection("VideoJuegos").find({ _id: { $in: videoGamesIDs } }).toArray();
+      return db.collection(colleccionVideojuegos).find({ _id: { $in: videoGamesIDs } }).toArray();
     },
   },
 
   Query: {
     me: async (_, __, { user }) => {
       if (!user) return null;
-      return {
-        _id: user._id,
-        email: user.email,
-        videogames: user.videogames || [],
-      };
+      return user
     },
+    videoGame :async(_, {id}) =>{
+      const result = getDb().collection(colleccionVideojuegos).findOne({_id: new ObjectId(id)})
+      if (!result) return null
+      return result
+    }
   },
 
   Mutation: {
@@ -46,5 +50,20 @@ export const resolvers: IResolvers = {
         user,
       };
     },
+    addVideogame: async(_,{title, price, year}) =>{
+      const db = getDb()
+
+      const result = await db.collection(colleccionVideojuegos).insertOne({
+        title,
+        price,
+        year
+      })
+      return {
+        _id: result.insertedId,
+        title,
+        price,
+        year
+      }
+    }
   },
 };

@@ -16,7 +16,14 @@ export const typeDefs = gql`
     type User {
         _id: ID!
         email: String!
+        videogames: [VideoGame]!
+    }
+
+    type Query {
+        me: User
         videoGames: [VideoGame]!
+        videoGame(id: ID!): VideoGame
+    
     }
     type Mutation {
     
@@ -24,7 +31,7 @@ export const typeDefs = gql`
 
         login(email: String!, password: String!) : String!
 
-        addVideogame(title: String!, price: Int!, year: String!): VideoJuego
+        addVideogame(title: String!, price: Int!, year: String!): VideoGame!
 
         addVideoGametoUser(videoID: String!): User!
     }
